@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Lacquered Prismatic Portfolio</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;800&family=JetBrains+Mono:wght@300;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #050505;
+                --surface: rgba(255, 255, 255, 0.03);
+                --border: rgba(255, 255, 255, 0.12);
+                --accent-prism: linear-gradient(
+                    135deg,
+                    #ff00c1,
+                    #9600ff,
+                    #5b00ff,
+                    #00b8ff,
+                    #00ff88
+                );
+                --lacquer-shine: rgba(255, 255, 255, 0.4);
+                --text-main: #f5f5f7;
+                --text-dim: #86868b;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                cursor: none;
+            }
+
+            body {
+                background-color: var(--bg);
+                color: var(--text-main);
+                font-family: "Inter", sans-serif;
+                overflow-x: hidden;
+                line-height: 1.5;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            /* Lacquered Background Texture */
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image:
+                    radial-gradient(
+                        circle at 50% 50%,
+                        rgba(20, 20, 30, 0.8),
+                        transparent
+                    ),
+                    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3External%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+                opacity: 0.04;
+                pointer-events: none;
+                z-index: 100;
+            }
+
+            /* Custom Prismatic Cursor */
+            #cursor {
+                width: 20px;
+                height: 20px;
+                background: #fff;
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                mix-blend-mode: difference;
+                transition: transform 0.1s ease-out;
+            }
+
+            #cursor-aura {
+                width: 400px;
+                height: 400px;
+                background: radial-gradient(
+                    circle,
+                    rgba(255, 0, 193, 0.15) 0%,
+                    transparent 70%
+                );
+                position: fixed;
+                pointer-events: none;
+                z-index: 9998;
+                transform: translate(-50%, -50%);
+                filter: blur(40px);
+            }
+
+            /* Layout Architecture */
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 4rem;
+            }
+
+            section {
+                padding: 12rem 0;
+                position: relative;
+            }
+
+            /* Typography */
+            h1,
+            h2 {
+                font-weight: 800;
+                letter-spacing: -0.04em;
+                text-transform: uppercase;
+            }
+
+            .mono {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.8rem;
+                color: var(--text-dim);
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+            }
+
+            /* Navigation */
+            nav {
+                position: fixed;
+                top: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 1000;
+                display: flex;
+                gap: 2rem;
+                padding: 1rem 2rem;
+                background: var(--surface);
+                backdrop-filter: blur(20px) saturate(180%);
+                border: 1px solid var(--border);
+                border-radius: 100px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            }
+
+            nav a {
+                color: var(--text-dim);
+                text-decoration: none;
+                font-size: 0.75rem;
+                font-weight: 500;
+                transition: color 0.3s ease;
+            }
+
+            nav a:hover {
+                color: var(--text-main);
+            }
+
+            /* Hero Section */
+            .hero {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+            }
+
+            .hero h1 {
+                font-size: clamp(4rem, 12vw, 10rem);
+                line-height: 0.9;
+                margin-bottom: 2rem;
+                position: relative;
+                background: linear-gradient(180deg, #fff 0%, #444 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .prismatic-blob {
+                position: absolute;
+                top: 20%;
+                right: 0;
+                width: 500px;
+                height: 500px;
+                background: var(--accent-prism);
+                filter: blur(120px);
+                opacity: 0.2;
+                border-radius: 50%;
+                z-index: -1;
+                animation: drift 20s infinite alternate linear;
+            }
+
+            @keyframes drift {
+                from {
+                    transform: translate(0, 0) scale(1);
+                }
+                to {
+                    transform: translate(-100px, 50px) scale(1.2);
+                }
+            }
+
+            /* About & Skills */
+            .grid-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8rem;
+            }
+
+            .skills-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+
+            .skill-chip {
+                padding: 1.5rem;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                position: relative;
+                overflow: hidden;
+                transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+
+            .skill-chip::after {
+                content: "";
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: linear-gradient(
+                    45deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.05),
+                    transparent
+                );
+                transform: rotate(45deg);
+                transition: 0.6s;
+            }
+
+            .skill-chip:hover {
+                transform: translateY(-10px);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+
+            .skill-chip:hover::after {
+                left: 100%;
+            }
+
+            /* Projects Section */
+            .projects-list {
+                display: flex;
+                flex-direction: column;
+                gap: 4rem;
+            }
+
+            .project-card {
+                display: flex;
+                gap: 4rem;
+                padding: 4rem;
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.02) 0%,
+                    transparent 100%
+                );
+                border-top: 1px solid var(--border);
+                transition: background 0.5s ease;
+            }
+
+            .project-card:hover {
+                background: rgba(255, 255, 255, 0.04);
+            }
+
+            .project-image {
+                flex: 1;
+                height: 400px;
+                background: #111;
+                position: relative;
+                overflow: hidden;
+                border-radius: 2px;
+            }
+
+            .project-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: grayscale(1) brightness(0.8);
+                transition:
+                    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                    filter 0.8s ease;
+            }
+
+            .project-card:hover .project-image img {
+                transform: scale(1.05);
+                filter: grayscale(0) brightness(1);
+            }
+
+            .project-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .project-title {
+                font-size: 3rem;
+                margin: 1rem 0;
+            }
+
+            /* Contact Section */
+            .contact-wrap {
+                text-align: center;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .contact-email {
+                font-size: clamp(2rem, 5vw, 4rem);
+                font-weight: 800;
+                color: var(--text-main);
+                text-decoration: none;
+                display: inline-block;
+                margin-top: 2rem;
+                position: relative;
+            }
+
+            .contact-email::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: var(--accent-prism);
+                transform: scaleX(0);
+                transform-origin: right;
+                transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            }
+
+            .contact-email:hover::after {
+                transform: scaleX(1);
+                transform-origin: left;
+            }
+
+            /* Displacement Effect SVG */
+            .displacement-canvas {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 50;
+                opacity: 0.4;
+                mix-blend-mode: screen;
+            }
+
+            @media (max-width: 968px) {
+                .grid-layout,
+                .project-card {
+                    flex-direction: column;
+                    grid-template-columns: 1fr;
+                    gap: 2rem;
+                }
+                .container {
+                    padding: 0 2rem;
+                }
+                .hero h1 {
+                    font-size: 4rem;
+                }
+                nav {
+                    width: 90%;
+                    justify-content: space-around;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="cursor"></div>
+        <div id="cursor-aura"></div>
+
+        <svg class="displacement-canvas">
+            <filter id="prism">
+                <feTurbulence
+                    type="fractalNoise"
+                    baseFrequency="0.01 0.005"
+                    numOctaves="2"
+                    result="noise"
+                    seed="2"
+                >
+                    <animate
+                        attributeName="baseFrequency"
+                        values="0.01 0.005; 0.02 0.01; 0.01 0.005"
+                        dur="15s"
+                        repeatCount="indefinite"
+                    />
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" />
+            </filter>
+        </svg>
+
+        <nav>
+            <a href="#about">ABOUT</a>
+            <a href="#skills">SKILLS</a>
+            <a href="#projects">PROJECTS</a>
+            <a href="#contact">CONTACT</a>
+        </nav>
+
+        <main class="container">
+            <section class="hero">
+                <div class="prismatic-blob"></div>
+                <p class="mono cursor-zoom">Full Stack Architect & Designer</p>
+                <h1 class="cursor-zoom">Creative<br />Logic.</h1>
+                <p
+                    style="
+                        max-width: 400px;
+                        color: var(--text-dim);
+                        margin-top: 2rem;
+                    "
+                >
+                    Crafting high-performance digital artifacts through
+                    lacquered aesthetics and mathematical precision.
+                </p>
+            </section>
+
+            <section id="about" class="grid-layout">
+                <div>
+                    <p class="mono" style="margin-bottom: 2rem">
+                        01 // THE ESSENCE
+                    </p>
+                    <h2 style="font-size: 3rem; margin-bottom: 2rem">
+                        Building the future, one pixel at a time.
+                    </h2>
+                </div>
+                <div style="color: var(--text-dim); font-size: 1.1rem">
+                    <p>
+                        I bridge the gap between technical complexity and
+                        sensory experience. My work focuses on building robust
+                        backend systems that feel as fluid as a lacquered
+                        surface, ensuring every interaction is meaningful and
+                        every line of code is optimized for performance.
+                    </p>
+                    <p style="margin-top: 2rem">
+                        Currently focused on Next.js, Rust, and the poetry of
+                        generative motion.
+                    </p>
+                </div>
+            </section>
+
+            <section id="skills">
+                <p class="mono" style="margin-bottom: 4rem; text-align: center">
+                    02 // CAPABILITIES
+                </p>
+                <div class="skills-grid">
+                    <div class="skill-chip">
+                        <p class="mono">FRONTEND</p>
+                        <h3 style="margin-top: 1rem">
+                            TypeScript, React, Three.js
+                        </h3>
+                    </div>
+                    <div class="skill-chip">
+                        <p class="mono">BACKEND</p>
+                        <h3 style="margin-top: 1rem">
+                            Node.js, PostgreSQL, Go
+                        </h3>
+                    </div>
+                    <div class="skill-chip">
+                        <p class="mono">DESIGN</p>
+                        <h3 style="margin-top: 1rem">Shaders (GLSL), Figma</h3>
+                    </div>
+                    <div class="skill-chip">
+                        <p class="mono">DEVOPS</p>
+                        <h3 style="margin-top: 1rem">AWS, Docker, CI/CD</h3>
+                    </div>
+                </div>
+            </section>
+
+            <section id="projects">
+                <p class="mono" style="margin-bottom: 4rem">
+                    03 // SELECTED WORKS
+                </p>
+                <div class="projects-list">
+                    <div class="project-card">
+                        <div class="project-image">
+                            <div
+                                style="
+                                    width: 100%;
+                                    height: 100%;
+                                    background: linear-gradient(
+                                        45deg,
+                                        #111,
+                                        #222
+                                    );
+                                "
+                            ></div>
+                        </div>
+                        <div class="project-info">
+                            <p class="mono">2023 - FINTECH</p>
+                            <h3 class="project-title">Obsidian Pay</h3>
+                            <p style="color: var(--text-dim)">
+                                A high-frequency trading dashboard with
+                                real-time prismatic data visualization.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="project-card">
+                        <div class="project-image">
+                            <div
+                                style="
+                                    width: 100%;
+                                    height: 100%;
+                                    background: linear-gradient(
+                                        45deg,
+                                        #0a0a0a,
+                                        #1a1a1a
+                                    );
+                                "
+                            ></div>
+                        </div>
+                        <div class="project-info">
+                            <p class="mono">2024 - AI TOOLING</p>
+                            <h3 class="project-title">Neuron Flow</h3>
+                            <p style="color: var(--text-dim)">
+                                Node-based visual programming interface for
+                                large language model orchestration.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contact" class="contact-wrap">
+                <p class="mono">04 // INQUIRIES</p>
+                <h2>Let's create something<br />translucent.</h2>
+                <a href="mailto:hello@studio.io" class="contact-email"
+                    >hello@studio.io</a
+                >
+            </section>
+        </main>
+
+        <footer
+            style="
+                padding: 4rem 0;
+                border-top: 1px solid var(--border);
+                text-align: center;
+            "
+        >
+            <p class="mono" style="font-size: 0.6rem">
+                &copy; 2024 LACQUERED SYSTEMS. ALL RIGHTS RESERVED.
+            </p>
+        </footer>
+
+        <script>
+            const cursor = document.getElementById("cursor");
+            const aura = document.getElementById("cursor-aura");
+
+            document.addEventListener("mousemove", (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+
+                cursor.style.transform = `translate(${x}px, ${y}px)`;
+
+                // Aura follows with a slight delay
+                requestAnimationFrame(() => {
+                    aura.style.left = x + "px";
+                    aura.style.top = y + "px";
+                });
+            });
+
+            // Smooth reveal on scroll
+            const observerOptions = {
+                threshold: 0.1,
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll("section").forEach((section) => {
+                section.style.opacity = "0";
+                section.style.transform = "translateY(40px)";
+                section.style.transition =
+                    "all 1s cubic-bezier(0.23, 1, 0.32, 1)";
+                observer.observe(section);
+            });
+
+            // // Prismatic interaction on hover
+            document.querySelectorAll(".cursor-zoom").forEach((item) => {
+                item.addEventListener("mouseenter", () => {
+                    // cursor.style.transform += " scale(5)";
+                    // cursor.style.background = "var(--accent-prism)";
+                    // cursor.style.mixBlendMode = "normal";
+                    cursor.style.width = "50px";
+                    cursor.style.height = "50px";
+                });
+                item.addEventListener("mouseleave", () => {
+                    // cursor.style.transform = cursor.style.transform.replace(
+                    //     " scale(2.5)",
+                    //     "",
+                    // );
+                    // cursor.style.background = "#fff";
+                    // cursor.style.mixBlendMode = "difference";
+                    cursor.style.transition = "all 0.5 ease-in-out";
+                    cursor.style.width = "20px";
+                    cursor.style.height = "20px";
+                });
+            });
+        </script>
+    </body>
+</html>
