@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monolithic Tectonic Slabwork Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #000000;
+        --surface: #ffffff;
+        --slab-border: 1px solid rgba(255, 255, 255, 0.15);
+        --transition: cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg);
+        color: var(--surface);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .section-header {
+        padding: 60px 40px 20px 40px;
+        text-transform: uppercase;
+        letter-spacing: -0.05em;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: var(--slab-border);
+      }
+
+      .section-header h2 {
+        font-size: clamp(2rem, 8vw, 6rem);
+        line-height: 0.85;
+      }
+
+      .section-header .stats {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        text-align: right;
+      }
+
+      /* The Tectonic Container */
+      .tectonic-grid {
+        display: flex;
+        width: 100%;
+        height: 70vh;
+        border-bottom: var(--slab-border);
+        overflow: hidden;
+        background: #050505;
+      }
+
+      .slab {
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        border-right: var(--slab-border);
+        transition:
+          flex 0.8s var(--transition),
+          background 0.4s ease;
+        cursor: pointer;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .slab:last-child {
+        border-right: none;
+      }
+
+      .slab:hover {
+        flex: 3;
+        background: #0a0a0a;
+      }
+
+      /* Slab Numbering (Monospace Data) */
+      .slab-id {
+        padding: 30px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+        opacity: 0.5;
+        z-index: 10;
+      }
+
+      /* Slab Heading (Vertical and Shifted) */
+      .slab-title-container {
+        position: absolute;
+        bottom: 40px;
+        left: 30px;
+        right: 30px;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .slab-heading {
+        font-size: 2.5rem;
+        text-transform: uppercase;
+        white-space: nowrap;
+        letter-spacing: -0.02em;
+        transform-origin: left bottom;
+        transition:
+          transform 0.8s var(--transition),
+          font-size 0.8s var(--transition);
+      }
+
+      /* Interaction states for text */
+      .slab:not(:hover) .slab-heading {
+        transform: rotate(-90deg) translate(0, 0);
+        font-size: 1.5rem;
+      }
+
+      .slab:hover .slab-heading {
+        transform: rotate(0deg) translate(0, -120px);
+        font-size: 4rem;
+      }
+
+      /* The "Slab" Visual Content (Hidden until expanded) */
+      .slab-content {
+        position: absolute;
+        bottom: 40px;
+        left: 30px;
+        right: 30px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.5s var(--transition) 0.3s,
+          transform 0.6s var(--transition) 0.3s;
+        max-width: 400px;
+      }
+
+      .slab:hover .slab-content {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .slab-content p {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .btn-tectonic {
+        display: inline-block;
+        padding: 12px 24px;
+        border: 1px solid #fff;
+        color: #fff;
+        text-decoration: none;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        transition:
+          background 0.3s ease,
+          color 0.3s ease;
+      }
+
+      .btn-tectonic:hover {
+        background: #fff;
+        color: #000;
+      }
+
+      /* Materiality: Grain Overlay */
+      .tectonic-grid::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 20;
+        opacity: 0.04;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      /* Decorative Background Lines */
+      .bg-lines {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-around;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.05;
+      }
+      .line {
+        width: 1px;
+        height: 100%;
+        background: #fff;
+      }
+
+      @media (max-width: 768px) {
+        .tectonic-grid {
+          flex-direction: column;
+          height: auto;
+        }
+        .slab {
+          height: 150px;
+          border-right: none;
+          border-bottom: var(--slab-border);
+        }
+        .slab:hover {
+          height: 400px;
+          flex: none;
+        }
+        .slab:not(:hover) .slab-heading {
+          transform: rotate(0) translate(0, 0);
+        }
+        .slab:hover .slab-heading {
+          transform: translateY(-200px);
+          font-size: 2.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="bg-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </section>
+
+    <header class="section-header">
+      <h2>PROJECTS</h2>
+      <div class="stats">
+        [ ARCHIVE 2024 ]<br />
+        [ INDEX 01-04 ]
+      </div>
+    </header>
+
+    <main class="tectonic-grid">
+      <!-- Slab 01 -->
+      <article class="slab">
+        <div class="slab-id">// 01_NEURAL_AXIS</div>
+        <div class="slab-title-container">
+          <h3 class="slab-heading">Neural Axis</h3>
+        </div>
+        <div class="slab-content">
+          <p>
+            A generative deep-learning interface exploring the boundaries of
+            tectonic movement within virtual spaces. High-density data
+            visualization.
+          </p>
+          <a href="#" class="btn-tectonic">View Process</a>
+        </div>
+      </article>
+
+      <!-- Slab 02 -->
+      <article class="slab">
+        <div class="slab-id">// 02_VOID_STRATA</div>
+        <div class="slab-title-container">
+          <h3 class="slab-heading">Void Strata</h3>
+        </div>
+        <div class="slab-content">
+          <p>
+            Architecture of nothingness. This project investigates minimalist
+            slabwork construction using black basalt and negative light
+            intervals.
+          </p>
+          <a href="#" class="btn-tectonic">View Case Study</a>
+        </div>
+      </article>
+
+      <!-- Slab 03 -->
+      <article class="slab">
+        <div class="slab-id">// 03_MONO_LITH</div>
+        <div class="slab-title-container">
+          <h3 class="slab-heading">Mono Lith</h3>
+        </div>
+        <div class="slab-content">
+          <p>
+            Digital permanence redefined. An encrypted storage system designed
+            as a monolithic block of glass and carbon fiber.
+          </p>
+          <a href="#" class="btn-tectonic">Explore Specs</a>
+        </div>
+      </article>
+
+      <!-- Slab 04 -->
+      <article class="slab">
+        <div class="slab-id">// 04_KINETIC_CORE</div>
+        <div class="slab-title-container">
+          <h3 class="slab-heading">Kinetic Core</h3>
+        </div>
+        <div class="slab-content">
+          <p>
+            Shifting mechanical structures that respond to environmental
+            frequency. Tectonic movement captured in 120fps precision.
+          </p>
+          <a href="#" class="btn-tectonic">Watch Motion</a>
+        </div>
+      </article>
+    </main>
+
+    <script>
+      // Optional: Subtle parallax or magnetic effect can be added here
+      // For now, the CSS transitions handle the tectonic expansion smoothly.
+      const slabs = document.querySelectorAll(".slab");
+
+      slabs.forEach((slab) => {
+        slab.addEventListener("mouseenter", () => {
+          // Potential JS-driven heavy feedback or sound triggers
+        });
+      });
+    </script>
+  </body>
+</html>

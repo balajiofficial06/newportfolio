@@ -43,6 +43,10 @@ export const GlobalStyles = createGlobalStyle`
   }
 
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
       background-color: var(--bg);
       color: var(--text-main);

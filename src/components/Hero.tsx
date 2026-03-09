@@ -6,6 +6,11 @@ const drift = keyframes`
   to { transform: translate(-100px,50px) scale(1.2); }
 `;
 
+const scrollAnimation = keyframes`
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(15px); opacity: 0; }
+`;
+
 const Section = styled.section`
   height: 100vh;
   padding: 0 4rem;
@@ -69,6 +74,11 @@ const SubText2 = styled.p`
   padding-left: ${asRem(10)};
   margin-top: ${asRem(20)};
   color: var(--text-dim);
+
+  @media (max-width: 768px) {
+    margin-top: 0;
+    padding-left: ${asRem(2)};
+  }
 `;
 
 const ContentDiv = styled.div`
@@ -77,6 +87,52 @@ const ContentDiv = styled.div`
   justify-content: center;
   align-items: flex-start;
   gap: ${asRem(5)};
+
+  @media (max-width: 768px) {
+   gap: ${asRem(20)};
+  }
+
+`;
+
+const ScrollWrapper = styled.div`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+  z-index: 10;
+`;
+
+const Mouse = styled.div`
+  width: 26px;
+  height: 40px;
+  border: 2px solid var(--text-dim);
+  border-radius: 20px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--text-dim);
+    border-radius: 50%;
+    animation: ${scrollAnimation} 2s infinite;
+  }
+`;
+
+const ScrollText = styled.span`
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 export default function Hero({
@@ -101,6 +157,10 @@ export default function Hero({
           aesthetics and mathematical precision.
         </SubText2>
       </ContentDiv>
+      <ScrollWrapper>
+        <Mouse />
+        <ScrollText>Scroll</ScrollText>
+      </ScrollWrapper>
     </Section>
   );
 }

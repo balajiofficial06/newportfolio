@@ -15,6 +15,12 @@ const Container = styled.div<{ level: number }>`
   width: 320px;
   height: 440px;
   border-radius: 24px;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    height: auto;
+    min-height: 280px;
+  }
   background: var(--card-base);
   display: flex;
   align-items: center;
@@ -68,6 +74,10 @@ const Inner = styled.div`
   width: 100%;
   height: 100%;
   padding: 40px 30px;
+
+  @media (max-width: 480px) {
+    padding: 24px 20px;
+  }
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -96,11 +106,15 @@ const Tag = styled.span`
 
 const Title = styled.h2`
   font-family: var(--font-main);
-  font-size: 38px;
-  font-weight: 800;
+  font-size: 32px;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.04em;
   color: #fff;
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
 `;
 
 const Body = styled.div`

@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { asRem } from "../utils/helper";
 import { Section, SectionTitle } from "../utils/Atoms";
 
@@ -11,6 +11,11 @@ export const InnerDiv = styled.div`
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
 const Heading = styled.h2`
@@ -34,13 +39,9 @@ const AboutText = styled.div`
   flex: 1;
 `;
 
-export default function About({
-  setCursorVal,
-}: {
-  setCursorVal: (val: number) => void;
-}) {
+export default function About() {
   return (
-    <Section>
+    <Section id="about">
       <SectionTitle>1. About</SectionTitle>
       <InnerDiv>
         <Heading>Building the future, one pixel at a time.</Heading>

@@ -10,6 +10,9 @@ const Dot = styled.div<{ size: number }>`
   z-index: 9999;
   pointer-events: none;
   mix-blend-mode: difference;
+  @media (max-width: 1024px) {
+    display: none;
+  }
 `;
 
 const Aura = styled.div`
@@ -21,6 +24,9 @@ const Aura = styled.div`
   pointer-events: none;
   z-index: 9998;
   transform: translate(-50%, -50%);
+  @media (max-width: 1024px) {
+    display: none;
+  }
 `;
 
 export default function Cursor({ cursorVal }: { cursorVal: number }) {

@@ -7,12 +7,15 @@ const Grid = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
 
-  @media (max-width: 768px) {
+  @media (max-width: 1025px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    place-items: center;
   }
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 `;
 
@@ -22,39 +25,48 @@ export default function Skills() {
       <SectionTitle>2. Skills</SectionTitle>
       <Grid>
         <SkillCard
-          tag="Engine v.4.2"
-          title="NEURAL<br/>FLUX"
+          tag="Expert"
+          title="FRONTEND"
           level={85}
           metrics={[
-            { label: "Purity", value: "98.2%" },
-            { label: "Latency", value: "12ms" },
+            { label: "projects", value: "20" },
+            { label: "years", value: "4" },
           ]}
         />
         <SkillCard
-          tag="Engine v.4.2"
-          title="NEURAL<br/>FLUX"
-          level={85}
+          tag="Expert"
+          title="BACKEND<br/>ARCHITECTURE"
+          level={95}
           metrics={[
-            { label: "Purity", value: "98.2%" },
-            { label: "Latency", value: "12ms" },
+            { label: "projects", value: "22" },
+            { label: "years", value: "6" },
           ]}
         />
         <SkillCard
-          tag="Engine v.4.2"
-          title="NEURAL<br/>FLUX"
-          level={85}
+          tag="Beginner"
+          title="Rust"
+          level={70}
           metrics={[
-            { label: "Purity", value: "98.2%" },
-            { label: "Latency", value: "12ms" },
+            { label: "projects", value: "4" },
+            { label: "years", value: "2" },
           ]}
         />
         <SkillCard
-          tag="Engine v.4.2"
-          title="NEURAL<br/>FLUX"
+          tag="Intermediate"
+          title="AWS<br/>CLOUD"
           level={85}
           metrics={[
-            { label: "Purity", value: "98.2%" },
-            { label: "Latency", value: "12ms" },
+            { label: "projects", value: "10" },
+            { label: "years", value: "3" },
+          ]}
+        />
+        <SkillCard
+          tag="Expert"
+          title="DATABASES"
+          level={85}
+          metrics={[
+            { label: "projects", value: "16" },
+            { label: "years", value: "4" },
           ]}
         />
       </Grid>

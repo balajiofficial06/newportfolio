@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { asRem } from "./helper";
 
 export const Section = styled.section`
@@ -12,10 +12,12 @@ export const Section = styled.section`
 
   @media (max-width: 768px) {
     padding: 0 2rem;
+    margin: 15% auto;
   }
 
   @media (max-width: 480px) {
     padding: 0;
+    margin: 10% auto;
   }
 `;
 

@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
+import emailjs from "@emailjs/browser";
 import { Section } from "../utils/Atoms";
 
 /* ---------------- Animations ---------------- */
@@ -37,21 +38,7 @@ const FluxBackground = styled.div`
   z-index: 0;
 `;
 
-const ConductiveLine = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--neon-flux),
-    var(--neon-cyan),
-    transparent
-  );
-  opacity: 0.3;
-`;
+
 
 const Grid = styled.div`
   position: relative;
@@ -65,6 +52,10 @@ const Grid = styled.div`
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
     gap: 60px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 40px;
   }
 `;
 
@@ -134,20 +125,18 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 40px;
+
+  @media (max-width: 480px) {
+    padding: 30px;
+    gap: 25px;
+  }
 `;
 
 const Group = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-`;
-
-const Label = styled.label`
-  font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 12px;
+  margin-top: 20px;
 `;
 
 const Input = styled.input`
@@ -155,36 +144,69 @@ const Input = styled.input`
   border: none;
   border-bottom: 1px solid var(--glass-stroke);
   padding: 12px 0;
-  font-size: 18px;
+  font-size: 16px;
   color: var(--text-main);
   outline: none;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 
   &:focus {
     border-bottom-color: var(--neon-cyan);
-    padding-left: 10px;
   }
 
-  &:focus + div {
-    width: 100%;
+  &::placeholder {
+    color: transparent;
+  }
+`;
+
+const Label = styled.label`
+  position: absolute;
+  top: 12px;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+
+  ${Input}:focus ~ &,
+  ${Input}:not(:placeholder-shown) ~ & {
+    top: -16px;
+    font-size: 10px;
+    color: var(--neon-cyan);
   }
 `;
 
 const Textarea = styled.textarea`
-  ${Input};
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--glass-stroke);
+  padding: 12px 0;
+  font-size: 16px;
+  color: var(--text-main);
+  outline: none;
+  width: 100%;
   resize: none;
+  font-family: inherit;
+  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:focus {
+    border-bottom-color: var(--neon-cyan);
+  }
+
+  &::placeholder {
+    color: transparent;
+  }
+  
+  &:focus ~ ${Label},
+  &:not(:placeholder-shown) ~ ${Label} {
+    top: -16px;
+    font-size: 10px;
+    color: var(--neon-cyan);
+  }
 `;
 
-const Indicator = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 1px;
-  width: 0;
-  background: var(--neon-cyan);
-  box-shadow: 0 0 15px var(--neon-cyan);
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-`;
 
 const Button = styled.button`
   margin-top: 20px;
@@ -221,10 +243,29 @@ const Button = styled.button`
   }
 `;
 
+const ErrorText = styled.span`
+  color: #ff4d4d;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  margin-top: 5px;
+  display: block;
+`;
+
 /* ---------------- Component ---------------- */
 
 export default function ContactMe() {
   const fluxRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">(
+    "idle",
+  );
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
@@ -243,8 +284,69 @@ export default function ContactMe() {
     return () => window.removeEventListener("mousemove", move);
   }, []);
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = "Transmission Origin (Name) is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Return Address (Email) is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid return address format";
+    }
+    if (!formData.subject.trim()) newErrors.subject = "Project Blueprint (Subject) is required";
+    if (!formData.message.trim()) newErrors.message = "Details are required";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log(formData);
+    if (!validate()) return;
+    
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+
+    try {
+      // REPLACE THESE WITH YOUR ACTUAL EMAILJS KEYS
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+        },
+        publicKey
+      );
+      setStatus("success");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      setTimeout(() => setStatus("idle"), 5000);
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 5000);
+    }
+  };
+
   return (
-    <Section style={{ position: "relative", overflow: "hidden" }}>
+    <Section id="contact" style={{ position: "relative", overflow: "hidden" }}>
       {/*<ConductiveLine />*/}
       <FluxBackground ref={fluxRef} />
 
@@ -271,24 +373,63 @@ export default function ContactMe() {
         </Header>
 
         <FormShell>
-          <Form>
-            {["Transmission Origin", "Return Address", "Project Blueprint"].map(
-              (label) => (
-                <Group key={label}>
-                  <Label>{label}</Label>
-                  <Input required />
-                  <Indicator />
-                </Group>
-              ),
-            )}
-
+          <Form ref={formRef} onSubmit={handleSubmit} noValidate>
             <Group>
-              <Label>Details</Label>
-              <Textarea rows={4} />
-              <Indicator />
+              <Input 
+                name="name" 
+                value={formData.name} 
+                onChange={handleChange} 
+                placeholder=" "
+                required 
+              />
+              <Label>Name</Label>
+              {errors.name && <ErrorText>{errors.name}</ErrorText>}
             </Group>
 
-            <Button type="submit">Initialize Link</Button>
+            <Group>
+              <Input 
+                name="email" 
+                type="email" 
+                value={formData.email} 
+                onChange={handleChange} 
+                placeholder=" "
+                required 
+              />
+              <Label>Email</Label>
+              {errors.email && <ErrorText>{errors.email}</ErrorText>}
+            </Group>
+
+            <Group>
+              <Input 
+                name="subject" 
+                value={formData.subject} 
+                onChange={handleChange} 
+                placeholder=" "
+                required 
+              />
+              <Label>Subject</Label>
+              {errors.subject && <ErrorText>{errors.subject}</ErrorText>}
+            </Group>
+
+            <Group>
+              <Textarea 
+                name="message" 
+                rows={4} 
+                value={formData.message} 
+                onChange={handleChange} 
+                placeholder=" "
+                required 
+              />
+              <Label>Message</Label>
+              {errors.message && <ErrorText>{errors.message}</ErrorText>}
+            </Group>
+
+            <Button type="submit" disabled={status === "sending"}>
+              {status === "sending" ? "Transmitting..." : 
+               status === "success" ? "Transmission Complete" : 
+               status === "error" ? "Transmission Failed" : 
+               "Initialize Link"}
+            </Button>
           </Form>
         </FormShell>
       </Grid>

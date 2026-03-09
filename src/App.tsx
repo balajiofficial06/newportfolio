@@ -5,6 +5,7 @@ import Hero from "./components/Hero";
 import Skills from "./components/Skills";
 import About from "./components/About";
 import Contact from "./components/ContactMe";
+import Projects from "./components/Projects";
 import { Outer, Page } from "./components/Layout";
 import { useState } from "react";
 
@@ -20,9 +21,8 @@ export default function App() {
         <Hero setCursorVal={setCursorVal} />
         <About />
         <Skills />
+        <Projects />
         <Contact />
-        {/*<Projects />
-        <Contact />*/}
       </Page>
     </Outer>
   );
