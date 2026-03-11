@@ -13,7 +13,7 @@ const projects = [
     cta: "View Project",
   },
   {
-    id: "01_BOOKING_ENGINE",
+    id: "02_BOOKING_ENGINE",
     title: "Booking Engine",
     description:
       "A multi-tenant booking engine built to power premium leisure and wellness destinations. Supports tiered admission packages, restaurant reservations, gift cards, and dynamic pricing — deployed for clients including Laugarás Lagoon and Forest Lagoon.",
@@ -21,20 +21,20 @@ const projects = [
     cta: "View Website",
   },
   {
-    id: "03_MONO_LITH",
-    title: "Mono Lith",
+    id: "03_npy",
+    title: "Python Framework",
     description:
-      "Digital permanence redefined. An encrypted storage system designed as a monolithic block of glass and carbon fiber.",
-    link: "#",
-    cta: "Explore Specs",
+      "A modular Python backend framework built on FastAPI with plug-and-play setup for APIs, databases, logging, and caching. Drop in a module, define your models and routes — the framework handles the rest.",
+    link: "https://github.com/balajiofficial06/npy",
+    cta: "View Project",
   },
   {
-    id: "04_KINETIC_CORE",
-    title: "Kinetic Core",
+    id: "04_ECOMMERCE_PLATFORM",
+    title: "E-Commerce",
     description:
-      "Shifting mechanical structures that respond to environmental frequency. Tectonic movement captured in 120fps precision.",
-    link: "#",
-    cta: "Watch Motion",
+      "A full-stack e-commerce platform with product management, cart, checkout, and order tracking. Built with multi-vendor support, payment gateway integration, and a dynamic storefront.",
+    link: "",
+    cta: "View Project",
   },
 ];
 
@@ -167,6 +167,16 @@ const SlabId = styled.div`
   font-size: 0.9rem;
   opacity: 0.5;
   z-index: 10;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+
+  @media (max-width: 768px) {
+    ${Slab}:hover & {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
 `;
 
 const SlabTitleContainer = styled.div`

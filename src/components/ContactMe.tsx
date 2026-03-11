@@ -38,8 +38,6 @@ const FluxBackground = styled.div`
   z-index: 0;
 `;
 
-
-
 const Grid = styled.div`
   position: relative;
   z-index: 2;
@@ -198,15 +196,13 @@ const Textarea = styled.textarea`
   &::placeholder {
     color: transparent;
   }
-  
-  &:focus ~ ${Label},
-  &:not(:placeholder-shown) ~ ${Label} {
+
+  &:focus ~ ${Label}, &:not(:placeholder-shown) ~ ${Label} {
     top: -16px;
     font-size: 10px;
     color: var(--neon-cyan);
   }
 `;
-
 
 const Button = styled.button`
   margin-top: 20px;
@@ -263,9 +259,9 @@ export default function ContactMe() {
     message: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<
+    "idle" | "sending" | "success" | "error"
+  >("idle");
 
   useEffect(() => {
     const move = (e: MouseEvent) => {
@@ -286,20 +282,24 @@ export default function ContactMe() {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Transmission Origin (Name) is required";
+    if (!formData.name.trim())
+      newErrors.name = "Transmission Origin (Name) is required";
     if (!formData.email.trim()) {
       newErrors.email = "Return Address (Email) is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Invalid return address format";
     }
-    if (!formData.subject.trim()) newErrors.subject = "Project Blueprint (Subject) is required";
+    if (!formData.subject.trim())
+      newErrors.subject = "Project Blueprint (Subject) is required";
     if (!formData.message.trim()) newErrors.message = "Details are required";
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: "" });
@@ -308,9 +308,8 @@ export default function ContactMe() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
     if (!validate()) return;
-    
+
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
     const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
@@ -333,7 +332,7 @@ export default function ContactMe() {
           subject: formData.subject,
           message: formData.message,
         },
-        publicKey
+        publicKey,
       );
       setStatus("success");
       setFormData({ name: "", email: "", subject: "", message: "" });
@@ -354,20 +353,20 @@ export default function ContactMe() {
         <Header>
           <Title>
             <span>Ignite</span>
-            The Flux
+            Contact
           </Title>
 
           <InfoBlock>
             <InfoItem>
               <InfoLabel>Direct Channel</InfoLabel>
-              <InfoValue href="mailto:hello@flux.studio">
-                hello@flux.studio
+              <InfoValue href="mailto:gm.raman.ww@gmail.com">
+                gm.raman.ww@gmail.com
               </InfoValue>
             </InfoItem>
 
             <InfoItem>
               <InfoLabel>Coordinates</InfoLabel>
-              <InfoValue as="span">London, UK / Remote</InfoValue>
+              <InfoValue as="span">Chennai, India / Remote</InfoValue>
             </InfoItem>
           </InfoBlock>
         </Header>
@@ -375,60 +374,63 @@ export default function ContactMe() {
         <FormShell>
           <Form ref={formRef} onSubmit={handleSubmit} noValidate>
             <Group>
-              <Input 
-                name="name" 
-                value={formData.name} 
-                onChange={handleChange} 
+              <Input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder=" "
-                required 
+                required
               />
               <Label>Name</Label>
               {errors.name && <ErrorText>{errors.name}</ErrorText>}
             </Group>
 
             <Group>
-              <Input 
-                name="email" 
-                type="email" 
-                value={formData.email} 
-                onChange={handleChange} 
+              <Input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder=" "
-                required 
+                required
               />
               <Label>Email</Label>
               {errors.email && <ErrorText>{errors.email}</ErrorText>}
             </Group>
 
             <Group>
-              <Input 
-                name="subject" 
-                value={formData.subject} 
-                onChange={handleChange} 
+              <Input
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
                 placeholder=" "
-                required 
+                required
               />
               <Label>Subject</Label>
               {errors.subject && <ErrorText>{errors.subject}</ErrorText>}
             </Group>
 
             <Group>
-              <Textarea 
-                name="message" 
-                rows={4} 
-                value={formData.message} 
-                onChange={handleChange} 
+              <Textarea
+                name="message"
+                rows={4}
+                value={formData.message}
+                onChange={handleChange}
                 placeholder=" "
-                required 
+                required
               />
               <Label>Message</Label>
               {errors.message && <ErrorText>{errors.message}</ErrorText>}
             </Group>
 
             <Button type="submit" disabled={status === "sending"}>
-              {status === "sending" ? "Transmitting..." : 
-               status === "success" ? "Transmission Complete" : 
-               status === "error" ? "Transmission Failed" : 
-               "Initialize Link"}
+              {status === "sending"
+                ? "Transmitting..."
+                : status === "success"
+                  ? "Transmission Complete"
+                  : status === "error"
+                    ? "Transmission Failed"
+                    : "Initialize Link"}
             </Button>
           </Form>
         </FormShell>

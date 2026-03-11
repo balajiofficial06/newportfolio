@@ -19,7 +19,7 @@ export const InnerDiv = styled.div`
 `;
 
 const Heading = styled.h2`
-  font-size: ${asRem(36)};
+  font-size: ${asRem(32)};
   /*font-weight: bold;*/
   margin-bottom: ${asRem(24)};
   flex: 1;
@@ -44,15 +44,15 @@ export default function About() {
     <Section id="about">
       <SectionTitle>1. About</SectionTitle>
       <InnerDiv>
-        <Heading>Building the future, one pixel at a time.</Heading>
+        <Heading>Crafting robust systems, from the ground up.</Heading>
         <AboutText>
           <p>
-            I am a passionate software engineer with a strong background in web
-            development. I have a deep understanding of front-end technologies
-            such as HTML, CSS, and JavaScript, as well as experience with
-            back-end technologies like Node.js and Express. I am always eager to
-            learn new technologies and stay up-to-date with the latest industry
-            trends.
+            I am a software engineer with 6 years of experience specializing in
+            backend development and systems programming. I build
+            high-performance, scalable backend systems using Python and Node.js,
+            and have a strong command of Rust for systems-level development. I
+            also bring working knowledge of frontend technologies, giving me a
+            well-rounded perspective across the full stack.
           </p>
         </AboutText>
       </InnerDiv>

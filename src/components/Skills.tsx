@@ -25,6 +25,15 @@ export default function Skills() {
       <SectionTitle>2. Skills</SectionTitle>
       <Grid>
         <SkillCard
+          tag="Advanced"
+          title="Rust"
+          level={80}
+          metrics={[
+            { label: "projects", value: "4" },
+            { label: "years", value: "2" },
+          ]}
+        />
+        <SkillCard
           tag="Expert"
           title="FRONTEND"
           level={85}
@@ -40,15 +49,6 @@ export default function Skills() {
           metrics={[
             { label: "projects", value: "22" },
             { label: "years", value: "6" },
-          ]}
-        />
-        <SkillCard
-          tag="Beginner"
-          title="Rust"
-          level={70}
-          metrics={[
-            { label: "projects", value: "4" },
-            { label: "years", value: "2" },
           ]}
         />
         <SkillCard
