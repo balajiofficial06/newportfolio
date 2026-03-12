@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { SectionTitle } from "../utils/Atoms";
 
 /* ---------- Data ---------- */
@@ -37,13 +37,6 @@ const projects = [
     cta: "View Project",
   },
 ];
-
-/* ---------- Animations ---------- */
-
-const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
-`;
 
 /* ---------- Styled Components ---------- */
 
