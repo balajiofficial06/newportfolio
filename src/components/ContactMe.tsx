@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import emailjs from "@emailjs/browser";
 import { Section } from "../utils/Atoms";
+import { useOnEnter } from "../hooks/useOnEnter";
 
 /* ---------------- Animations ---------------- */
 
@@ -130,11 +131,16 @@ const Form = styled.form`
   }
 `;
 
-const Group = styled.div`
+const Group = styled.div<{ $visible?: boolean; $delay?: number }>`
   position: relative;
   display: flex;
   flex-direction: column;
   margin-top: 20px;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: ${({ $visible }) => ($visible ? "translateY(0)" : "translateY(20px)")};
+  transition:
+    opacity 0.4s var(--transition) ${({ $delay }) => $delay ?? 0}ms,
+    transform 0.4s var(--transition) ${({ $delay }) => $delay ?? 0}ms;
 `;
 
 const Input = styled.input`
@@ -252,6 +258,10 @@ const ErrorText = styled.span`
 export default function ContactMe() {
   const fluxRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const formShellRef = useRef<HTMLDivElement>(null);
+  const [formVisible, setFormVisible] = useState(false);
+
+  useOnEnter(formShellRef, () => setFormVisible(true), 0.1);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -371,9 +381,9 @@ export default function ContactMe() {
           </InfoBlock>
         </Header>
 
-        <FormShell>
+        <FormShell ref={formShellRef}>
           <Form ref={formRef} onSubmit={handleSubmit} noValidate>
-            <Group>
+            <Group $visible={formVisible} $delay={0}>
               <Input
                 name="name"
                 value={formData.name}
@@ -385,7 +395,7 @@ export default function ContactMe() {
               {errors.name && <ErrorText>{errors.name}</ErrorText>}
             </Group>
 
-            <Group>
+            <Group $visible={formVisible} $delay={80}>
               <Input
                 name="email"
                 type="email"
@@ -398,7 +408,7 @@ export default function ContactMe() {
               {errors.email && <ErrorText>{errors.email}</ErrorText>}
             </Group>
 
-            <Group>
+            <Group $visible={formVisible} $delay={160}>
               <Input
                 name="subject"
                 value={formData.subject}
@@ -410,7 +420,7 @@ export default function ContactMe() {
               {errors.subject && <ErrorText>{errors.subject}</ErrorText>}
             </Group>
 
-            <Group>
+            <Group $visible={formVisible} $delay={240}>
               <Textarea
                 name="message"
                 rows={4}

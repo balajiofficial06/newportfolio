@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import type { RefObject } from "react";
+import type Lenis from "lenis";
 
 const Nav = styled.nav`
   position: fixed;
@@ -29,28 +31,51 @@ const Nav = styled.nav`
   }
 `;
 
-const Link = styled.a`
-  color: var(--text-dim);
+const Link = styled.a<{ $active?: boolean }>`
+  color: ${({ $active }) => ($active ? "var(--neon-cyan)" : "var(--text-dim)")};
+  text-shadow: ${({ $active }) =>
+    $active ? "0 0 12px var(--neon-cyan)" : "none"};
   text-decoration: none;
   font-size: 0.75rem;
   cursor: pointer;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
 
   &:hover {
     color: var(--text-main);
+    text-shadow: none;
   }
 `;
 
-function scrollTo(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-}
+export default function Navbar({
+  lenisRef,
+  activeSection,
+}: {
+  lenisRef: RefObject<Lenis | null>;
+  activeSection: string | null;
+}) {
+  function scrollTo(id: string) {
+    const el = document.getElementById(id);
+    lenisRef.current?.scrollTo(el ?? 0);
+  }
 
-export default function Navbar() {
+  const links = [
+    { id: "about", label: "ABOUT" },
+    { id: "skills", label: "SKILLS" },
+    { id: "projects", label: "PROJECTS" },
+    { id: "contact", label: "CONTACT" },
+  ];
+
   return (
     <Nav>
-      <Link onClick={() => scrollTo("about")}>ABOUT</Link>
-      <Link onClick={() => scrollTo("skills")}>SKILLS</Link>
-      <Link onClick={() => scrollTo("projects")}>PROJECTS</Link>
-      <Link onClick={() => scrollTo("contact")}>CONTACT</Link>
+      {links.map(({ id, label }) => (
+        <Link
+          key={id}
+          onClick={() => scrollTo(id)}
+          $active={activeSection === id}
+        >
+          {label}
+        </Link>
+      ))}
     </Nav>
   );
 }

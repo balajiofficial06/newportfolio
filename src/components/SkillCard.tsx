@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
 /* ---------- Animations ---------- */
@@ -10,7 +10,7 @@ const rotateCurrent = keyframes`
 
 /* ---------- Styled Components ---------- */
 
-const Container = styled.div<{ level: number }>`
+const Container = styled.div<{ level: number; $filled: boolean }>`
   position: relative;
   width: 320px;
   height: 440px;
@@ -136,7 +136,7 @@ const DataPoint = styled.div`
   gap: 4px;
 `;
 
-const Label = styled.span`
+const MetricLabel = styled.span`
   font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.1em;
@@ -161,19 +161,15 @@ const ProgressWrap = styled.div`
   margin-top: 20px;
 `;
 
-const ProgressFill = styled.div`
+const ProgressFill = styled.div<{ $filled: boolean; $delay: number }>`
   height: 100%;
-  width: 0%;
+  width: ${({ $filled }) => ($filled ? "var(--skill-level)" : "0%")};
   background: linear-gradient(
     90deg,
     var(--neon-primary),
     var(--neon-secondary)
   );
-  transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
-
-  ${Container}:hover & {
-    width: var(--skill-level);
-  }
+  transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1) ${({ $delay }) => $delay}ms;
 `;
 
 const Bloom = styled.div`
@@ -186,7 +182,20 @@ const Bloom = styled.div`
   z-index: -1;
 `;
 
-/* ---------- Component ---------- */
+/* ---------- Counter Roll ---------- */
+
+function startCount(el: HTMLElement, target: number, duration = 800) {
+  const start = performance.now();
+  function tick(now: number) {
+    const progress = Math.min((now - start) / duration, 1);
+    el.textContent = String(Math.floor(progress * target));
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = String(target);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- Types ---------- */
 
 type Metric = {
   label: string;
@@ -197,41 +206,58 @@ type SkillCardProps = {
   tag: string;
   title: string;
   metrics: Metric[];
-  level: number; // 0–100
+  level: number;
+  triggered: boolean;
+  triggerDelay: number;
 };
+
+/* ---------- Component ---------- */
 
 export default function SkillCard({
   tag,
   title,
   metrics,
   level,
+  triggered,
+  triggerDelay,
 }: SkillCardProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const valueRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const countedRef = useRef(false);
 
+  // 3D tilt on mouse move
   const onMove = (e: React.MouseEvent) => {
     if (!ref.current) return;
-
     const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
     const rx = (y - rect.height / 2) / 15;
     const ry = (rect.width / 2 - x) / 15;
-
-    ref.current.style.transform = `
-      perspective(1000px)
-      translateY(-10px)
-      rotateX(${rx}deg)
-      rotateY(${ry}deg)
-      scale(1.02)
-    `;
+    ref.current.style.transform = `perspective(1000px) translateY(-10px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
   };
 
   const onLeave = () => {
     if (!ref.current) return;
-    ref.current.style.transform =
-      "perspective(1000px) translateY(0) rotateX(0) rotateY(0) scale(1)";
+    ref.current.style.transform = "perspective(1000px) translateY(0) rotateX(0) rotateY(0) scale(1)";
   };
+
+  // Counter roll when triggered (play once)
+  useEffect(() => {
+    if (!triggered || countedRef.current) return;
+    countedRef.current = true;
+
+    const timer = setTimeout(() => {
+      metrics.forEach((m, i) => {
+        const el = valueRefs.current[i];
+        if (!el) return;
+        const target = parseInt(m.value, 10);
+        if (isNaN(target)) return; // non-numeric value stays static
+        startCount(el, target);
+      });
+    }, triggerDelay);
+
+    return () => clearTimeout(timer);
+  }, [triggered, metrics, triggerDelay]);
 
   return (
     <>
@@ -239,6 +265,7 @@ export default function SkillCard({
       <Container
         ref={ref}
         level={level}
+        $filled={triggered}
         onMouseMove={onMove}
         onMouseLeave={onLeave}
       >
@@ -250,15 +277,17 @@ export default function SkillCard({
 
           <Body>
             <Grid>
-              {metrics.map((m) => (
+              {metrics.map((m, i) => (
                 <DataPoint key={m.label}>
-                  <Label>{m.label}</Label>
-                  <Value>{m.value}</Value>
+                  <MetricLabel>{m.label}</MetricLabel>
+                  <Value ref={(el) => { valueRefs.current[i] = el; }}>
+                    {m.value}
+                  </Value>
                 </DataPoint>
               ))}
 
               <ProgressWrap>
-                <ProgressFill />
+                <ProgressFill $filled={triggered} $delay={triggerDelay} />
               </ProgressWrap>
             </Grid>
           </Body>

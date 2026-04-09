@@ -44,7 +44,19 @@ export const GlobalStyles = createGlobalStyle`
 
 
   html {
-    scroll-behavior: smooth;
+    /* scroll-behavior removed — Lenis owns smooth scroll */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal],
+    [data-hero-item] {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .blob-drift {
+      animation: none !important;
+    }
   }
 
   body {

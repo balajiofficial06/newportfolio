@@ -1,5 +1,7 @@
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { SectionTitle } from "../utils/Atoms";
+import { useOnEnter } from "../hooks/useOnEnter";
 
 /* ---------- Data ---------- */
 
@@ -114,7 +116,7 @@ const BgLine = styled.div`
 
 /* ---------- Slab ---------- */
 
-const Slab = styled.article`
+const Slab = styled.article<{ $entered: boolean; $delay: number }>`
   position: relative;
   flex: 1;
   display: flex;
@@ -122,11 +124,15 @@ const Slab = styled.article`
   border-right: 1px solid rgba(255, 255, 255, 0.15);
   transition:
     flex 0.8s cubic-bezier(0.23, 1, 0.32, 1),
-    background 0.4s ease;
+    background 0.4s ease,
+    opacity 0.8s cubic-bezier(0.23, 1, 0.32, 1) ${({ $delay }) => $delay}ms,
+    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1) ${({ $delay }) => $delay}ms;
   cursor: pointer;
   overflow: hidden;
   background: #000;
   z-index: 1;
+  opacity: ${({ $entered }) => ($entered ? 1 : 0)};
+  transform: ${({ $entered }) => ($entered ? "translateX(0)" : "translateX(60px)")};
 
   &:last-child {
     border-right: none;
@@ -142,6 +148,8 @@ const Slab = styled.article`
     flex: none;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    opacity: 1;
+    transform: none;
 
     &:hover {
       height: 400px;
@@ -265,11 +273,16 @@ const SlabBtn = styled.a`
 /* ---------- Component ---------- */
 
 export default function Projects() {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [entered, setEntered] = useState(false);
+
+  useOnEnter(gridRef, () => setEntered(true), 0.1);
+
   return (
     <Wrapper id="projects">
       <SectionTitle>3. Projects</SectionTitle>
 
-      <TectonicGrid style={{ marginTop: "2rem" }}>
+      <TectonicGrid ref={gridRef} style={{ marginTop: "2rem" }}>
         <BgLines>
           <BgLine />
           <BgLine />
@@ -278,7 +291,7 @@ export default function Projects() {
         </BgLines>
 
         {projects.map((p, i) => (
-          <Slab key={p.id}>
+          <Slab key={p.id} $entered={entered} $delay={i * 120}>
             <SlabId>// {p.id}</SlabId>
 
             <SlabTitleContainer>

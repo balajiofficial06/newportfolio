@@ -1,15 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import styled from "styled-components";
+import type Lenis from "lenis";
 
-const Dot = styled.div<{ size: number }>`
-  width: ${({ size }) => size}px;
-  height: ${({ size }) => size}px;
+const Dot = styled.div`
+  width: 20px;
+  height: 20px;
   background: white;
   border-radius: 50%;
   position: fixed;
   z-index: 9999;
   pointer-events: none;
   mix-blend-mode: difference;
+  transition: width 0.15s ease, height 0.15s ease;
   @media (max-width: 1024px) {
     display: none;
   }
@@ -29,10 +31,15 @@ const Aura = styled.div`
   }
 `;
 
-export default function Cursor({ cursorVal }: { cursorVal: number }) {
+export default function Cursor({
+  lenisRef,
+}: {
+  lenisRef: RefObject<Lenis | null>;
+}) {
   const dotRef = useRef<HTMLDivElement>(null);
   const auraRef = useRef<HTMLDivElement>(null);
 
+  // Track mouse position — direct DOM, no state
   useEffect(() => {
     const move = (e: MouseEvent) => {
       if (!dotRef.current || !auraRef.current) return;
@@ -45,9 +52,25 @@ export default function Cursor({ cursorVal }: { cursorVal: number }) {
     return () => window.removeEventListener("mousemove", move);
   }, []);
 
+  // Expand dot on fast scroll — direct DOM, no state, no re-renders
+  useEffect(() => {
+    const lenis = lenisRef.current;
+    if (!lenis) return;
+
+    const onScroll = ({ velocity }: { velocity: number }) => {
+      if (!dotRef.current) return;
+      const size = 20 + Math.min(Math.abs(velocity) * 30, 60);
+      dotRef.current.style.width = `${size}px`;
+      dotRef.current.style.height = `${size}px`;
+    };
+
+    lenis.on("scroll", onScroll);
+    return () => lenis.off("scroll", onScroll);
+  }, [lenisRef]);
+
   return (
     <>
-      <Dot id="cursor-dot" size={cursorVal} ref={dotRef} />
+      <Dot id="cursor-dot" ref={dotRef} />
       <Aura id="cursor-aura" ref={auraRef} />
     </>
   );
