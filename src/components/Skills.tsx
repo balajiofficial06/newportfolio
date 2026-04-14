@@ -25,7 +25,7 @@ export default function Skills() {
   const gridRef = useRef<HTMLDivElement>(null);
   const [triggered, setTriggered] = useState(false);
 
-  useOnEnter(gridRef, () => setTriggered(true), 0.1);
+  useOnEnter(gridRef, () => setTriggered(true));
 
   const skills = [
     { tag: "Advanced", title: "Rust", level: 80, metrics: [{ label: "projects", value: "4" }, { label: "years", value: "2" }] },

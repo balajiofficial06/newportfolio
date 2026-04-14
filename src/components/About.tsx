@@ -61,7 +61,7 @@ export default function About() {
   const [revealed, setRevealed] = useState(false);
   const words = splitWords(ABOUT_TEXT);
 
-  useOnEnter(containerRef, () => setRevealed(true), 0.1);
+  useOnEnter(containerRef, () => setRevealed(true));
 
   return (
     <Section id="about">

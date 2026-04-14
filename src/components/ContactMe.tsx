@@ -261,7 +261,7 @@ export default function ContactMe() {
   const formShellRef = useRef<HTMLDivElement>(null);
   const [formVisible, setFormVisible] = useState(false);
 
-  useOnEnter(formShellRef, () => setFormVisible(true), 0.1);
+  useOnEnter(formShellRef, () => setFormVisible(true));
   const [formData, setFormData] = useState({
     name: "",
     email: "",

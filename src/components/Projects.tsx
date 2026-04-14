@@ -276,7 +276,7 @@ export default function Projects() {
   const gridRef = useRef<HTMLDivElement>(null);
   const [entered, setEntered] = useState(false);
 
-  useOnEnter(gridRef, () => setEntered(true), 0.1);
+  useOnEnter(gridRef, () => setEntered(true));
 
   return (
     <Wrapper id="projects">
