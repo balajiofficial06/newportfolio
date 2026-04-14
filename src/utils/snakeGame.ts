@@ -38,6 +38,8 @@ export function initSnakeGame(
       const noop = () => {};
       return { handleKey: noop, handleDpad: noop, startOrRestart: noop, destroy: noop };
     }
+    // Bind a non-nullable alias so inner functions (closures) see the narrowed type.
+    const c = ctx;
 
     // ── helpers ───────────────────────────────────────────────────────────
 
@@ -52,49 +54,49 @@ export function initSnakeGame(
 
     /** Draw a filled rounded rectangle without using the newer roundRect() API */
     function fillRoundRect(x: number, y: number, w: number, h: number, r: number) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.arcTo(x + w, y, x + w, y + r, r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-      ctx.lineTo(x + r, y + h);
-      ctx.arcTo(x, y + h, x, y + h - r, r);
-      ctx.lineTo(x, y + r);
-      ctx.arcTo(x, y, x + r, y, r);
-      ctx.closePath();
-      ctx.fill();
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.lineTo(x + w - r, y);
+      c.arcTo(x + w, y, x + w, y + r, r);
+      c.lineTo(x + w, y + h - r);
+      c.arcTo(x + w, y + h, x + w - r, y + h, r);
+      c.lineTo(x + r, y + h);
+      c.arcTo(x, y + h, x, y + h - r, r);
+      c.lineTo(x, y + r);
+      c.arcTo(x, y, x + r, y, r);
+      c.closePath();
+      c.fill();
     }
 
     // ── draw ──────────────────────────────────────────────────────────────
 
     function drawGrid() {
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-      ctx.lineWidth = 0.5;
+      c.strokeStyle = 'rgba(255,255,255,0.04)';
+      c.lineWidth = 0.5;
       for (let i = 1; i < GRID; i++) {
-        ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, canvas.height); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(canvas.width, i * CELL); ctx.stroke();
+        c.beginPath(); c.moveTo(i * CELL, 0); c.lineTo(i * CELL, canvas.height); c.stroke();
+        c.beginPath(); c.moveTo(0, i * CELL); c.lineTo(canvas.width, i * CELL); c.stroke();
       }
     }
 
     function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      c.clearRect(0, 0, canvas.width, canvas.height);
 
       // Background
-      ctx.fillStyle = BG;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      c.fillStyle = BG;
+      c.fillRect(0, 0, canvas.width, canvas.height);
 
       drawGrid();
 
       // Food — filled circle with glow
-      ctx.save();
-      ctx.shadowColor = ACCENT;
-      ctx.shadowBlur = 12;
-      ctx.fillStyle = ACCENT;
-      ctx.beginPath();
-      ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - 1.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
+      c.save();
+      c.shadowColor = ACCENT;
+      c.shadowBlur = 12;
+      c.fillStyle = ACCENT;
+      c.beginPath();
+      c.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - 1.5, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
 
       // Snake — opacity fades toward the tail
       const len = snake.length;
@@ -103,44 +105,44 @@ export function initSnakeGame(
         const pad = 1.5;
         const size = CELL - pad * 2;
 
-        ctx.save();
+        c.save();
         if (i === 0) {
-          ctx.shadowColor = ACCENT;
-          ctx.shadowBlur = 8;
-          ctx.fillStyle = ACCENT;
+          c.shadowColor = ACCENT;
+          c.shadowBlur = 8;
+          c.fillStyle = ACCENT;
         } else {
-          ctx.fillStyle = `rgba(0,243,255,${alpha.toFixed(2)})`;
+          c.fillStyle = `rgba(0,243,255,${alpha.toFixed(2)})`;
         }
         fillRoundRect(seg.x * CELL + pad, seg.y * CELL + pad, size, size, i === 0 ? 4 : 2);
-        ctx.restore();
+        c.restore();
       });
 
       // Game-over overlay
       if (dead) {
-        ctx.fillStyle = 'rgba(0,0,0,0.7)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        c.fillStyle = 'rgba(0,0,0,0.7)';
+        c.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.textAlign = 'center';
-        ctx.font = 'bold 15px "JetBrains Mono", monospace';
-        ctx.fillStyle = DEAD_COLOR;
-        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
+        c.textAlign = 'center';
+        c.font = 'bold 15px "JetBrains Mono", monospace';
+        c.fillStyle = DEAD_COLOR;
+        c.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 20);
 
-        ctx.font = '11px "JetBrains Mono", monospace';
-        ctx.fillStyle = 'rgba(0,243,255,0.75)';
-        ctx.fillText(`score  ${score}`, canvas.width / 2, canvas.height / 2 + 4);
-        ctx.fillText('tap · click · press any arrow to restart', canvas.width / 2, canvas.height / 2 + 22);
+        c.font = '11px "JetBrains Mono", monospace';
+        c.fillStyle = 'rgba(0,243,255,0.75)';
+        c.fillText(`score  ${score}`, canvas.width / 2, canvas.height / 2 + 4);
+        c.fillText('tap · click · press any arrow to restart', canvas.width / 2, canvas.height / 2 + 22);
       }
     }
 
     function drawIdle() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = BG;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      c.clearRect(0, 0, canvas.width, canvas.height);
+      c.fillStyle = BG;
+      c.fillRect(0, 0, canvas.width, canvas.height);
       drawGrid();
-      ctx.textAlign = 'center';
-      ctx.font = '12px "JetBrains Mono", monospace';
-      ctx.fillStyle = 'rgba(0,243,255,0.4)';
-      ctx.fillText('tap  ·  press any arrow key  to start', canvas.width / 2, canvas.height / 2);
+      c.textAlign = 'center';
+      c.font = '12px "JetBrains Mono", monospace';
+      c.fillStyle = 'rgba(0,243,255,0.4)';
+      c.fillText('tap  ·  press any arrow key  to start', canvas.width / 2, canvas.height / 2);
     }
 
     // ── game loop ─────────────────────────────────────────────────────────
