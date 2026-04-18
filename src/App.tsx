@@ -7,6 +7,7 @@ import Skills from "./components/Skills";
 import About from "./components/About";
 import Contact from "./components/ContactMe";
 import Projects from "./components/Projects";
+import SnakeSection from "./components/SnakeSection";
 import Footer from "./components/Footer";
 import { Outer, Page } from "./components/Layout";
 import { useLenis } from "./hooks/useLenis";
@@ -59,6 +60,7 @@ export default function App() {
         <Skills />
         <Projects />
         <Contact />
+        <SnakeSection />
       </Page>
       <Footer />
     </Outer>

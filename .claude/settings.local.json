@@ -5,7 +5,12 @@
       "Bash(npm install:*)",
       "Bash(npm run:*)",
       "Bash(npx tsc:*)",
-      "Bash(cmd:*)"
+      "Bash(cmd:*)",
+      "Skill(plan-design-review)",
+      "Skill(investigate)",
+      "Bash(~/.claude/skills/gstack/bin/gstack-config set *)",
+      "Skill(browse)",
+      "Skill(browse:*)"
     ]
   }
 }
