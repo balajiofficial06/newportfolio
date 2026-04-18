@@ -137,7 +137,8 @@ const Group = styled.div<{ $visible?: boolean; $delay?: number }>`
   flex-direction: column;
   margin-top: 20px;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  transform: ${({ $visible }) => ($visible ? "translateY(0)" : "translateY(20px)")};
+  transform: ${({ $visible }) =>
+    $visible ? "translateY(0)" : "translateY(20px)"};
   transition:
     opacity 0.4s var(--transition) ${({ $delay }) => $delay ?? 0}ms,
     transform 0.4s var(--transition) ${({ $delay }) => $delay ?? 0}ms;
@@ -224,6 +225,7 @@ const Button = styled.button`
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  width: 100%;
 
   &::before {
     content: "";

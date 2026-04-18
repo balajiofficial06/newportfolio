@@ -40,7 +40,9 @@ const Title = styled.h1`
   text-transform: uppercase;
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.6s var(--transition), transform 0.6s var(--transition);
+  transition:
+    opacity 0.6s var(--transition),
+    transform 0.6s var(--transition);
 
   &[data-hero-item="visible"] {
     opacity: 1;
@@ -114,7 +116,7 @@ const ContentDiv = styled.div`
   gap: ${asRem(5)};
 
   @media (max-width: 768px) {
-   gap: ${asRem(20)};
+    gap: ${asRem(40)};
   }
 `;
 
@@ -144,7 +146,7 @@ const Mouse = styled.div`
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 6px;
     left: 50%;
@@ -178,10 +180,23 @@ export default function Hero({
   // Hero entrance: staggered cascade on mount
   useEffect(() => {
     const timers = [
-      setTimeout(() => subTextRef.current?.setAttribute("data-hero-item", "visible"), 100),
-      setTimeout(() => titleRef.current?.setAttribute("data-hero-item", "visible"), 300),
-      setTimeout(() => subText2Ref.current?.setAttribute("data-hero-item", "visible"), 700),
-      setTimeout(() => scrollWrapperRef.current?.setAttribute("data-hero-item", "visible"), 900),
+      setTimeout(
+        () => subTextRef.current?.setAttribute("data-hero-item", "visible"),
+        100,
+      ),
+      setTimeout(
+        () => titleRef.current?.setAttribute("data-hero-item", "visible"),
+        300,
+      ),
+      setTimeout(
+        () => subText2Ref.current?.setAttribute("data-hero-item", "visible"),
+        700,
+      ),
+      setTimeout(
+        () =>
+          scrollWrapperRef.current?.setAttribute("data-hero-item", "visible"),
+        900,
+      ),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
