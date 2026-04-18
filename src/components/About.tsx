@@ -41,8 +41,10 @@ const AboutText = styled.div<{ $revealed: boolean }>`
 
   .word {
     display: inline-block;
+    margin-right: 0.25em;
     opacity: ${({ $revealed }) => ($revealed ? 1 : 0)};
-    transform: ${({ $revealed }) => ($revealed ? "translateY(0)" : "translateY(12px)")};
+    transform: ${({ $revealed }) =>
+      $revealed ? "translateY(0)" : "translateY(12px)"};
     transition:
       opacity 0.6s var(--transition),
       transform 0.6s var(--transition);
@@ -76,7 +78,7 @@ export default function About() {
                 className="word"
                 style={{ transitionDelay: `${index * 40}ms` }}
               >
-                {word}{" "}
+                {word}
               </span>
             ))}
           </p>
